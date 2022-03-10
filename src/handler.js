@@ -71,10 +71,13 @@ const getHandlerById = (req, h) => {
   return res;
 };
 
-const editNoteByHandler = (req, h) => {
+const editNoteByIdHandler = (req, h) => {
+  // mengambil id
   const { id } = req.params;
+  // mengambil data notes terbaru
   const { title, tags, body } = req.payload;
   const updateAt = new Date().toISOString();
+  // Finding index ke-
   const index = notes.findIndex((note) => note.id === id);
   if (index !== -1) {
     notes[index] = {
@@ -84,6 +87,7 @@ const editNoteByHandler = (req, h) => {
       body,
       updateAt,
     };
+    // respon sukses
     const res = h.response({
       status: 'success',
       message: 'Catatan berhasil diperbarui',
@@ -91,7 +95,7 @@ const editNoteByHandler = (req, h) => {
     res.code(200);
     return res;
   }
-
+  // respon fail
   const res = h.response({
     status: 'fail',
     message: 'Gagal memperbarui catatan. Id not found',
@@ -101,5 +105,8 @@ const editNoteByHandler = (req, h) => {
 };
 
 module.exports = {
-  addNoteHandler, getAllNotesHandler, getHandlerById, editNoteByHandler,
+  addNoteHandler,
+  getAllNotesHandler,
+  getHandlerById,
+  editNoteByIdHandler,
 };
