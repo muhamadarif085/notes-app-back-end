@@ -14,7 +14,7 @@ const init = async () => {
   });
   server.route(routes);
   await server.start();
-  console.log(`Server unning on ${server.info.uri}`);
+  console.log(`Server running on ${server.info.uri}`);
 };
 
 init();

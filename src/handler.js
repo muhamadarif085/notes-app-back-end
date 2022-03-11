@@ -2,6 +2,7 @@ const { nanoid } = require('nanoid');
 const notes = require('./notes');
 
 const addNoteHandler = (req, h) => {
+  // Mnegirim konten ke catatan dg ID acak
   const { title, tags, body } = req.payload;
 
   const id = nanoid(16);
@@ -19,7 +20,7 @@ const addNoteHandler = (req, h) => {
     updateAt,
   };
 
-  // push ke note
+  // Push ke note
   notes.push(newNote);
   const IsSuccess = notes.filter((note) => note.id === id).length > 0;
   // Response sukses
@@ -34,7 +35,7 @@ const addNoteHandler = (req, h) => {
     res.code(201);
     return res;
   }
-
+  // Respon gagal
   const res = h.response({
     status: 'fail',
     message: 'Catatan gagal ditambahkan',
@@ -52,7 +53,7 @@ const getAllNotesHandler = () => ({
 });
 
 const getHandlerById = (req, h) => {
-  // mendapatkan id dengan memanfaatkan filter()
+  // Mendapatkan id dengan memanfaatkan filter()
   const { id } = req.params;
   const note = notes.filter((n) => n.id === id)[0];
   if (note !== undefined) {
@@ -72,9 +73,9 @@ const getHandlerById = (req, h) => {
 };
 
 const editNoteByIdHandler = (req, h) => {
-  // mengambil id
+  // Mengambil id
   const { id } = req.params;
-  // mengambil data notes terbaru
+  // Mengambil data notes terbaru
   const { title, tags, body } = req.payload;
   const updateAt = new Date().toISOString();
   // Finding index ke-
@@ -87,7 +88,7 @@ const editNoteByIdHandler = (req, h) => {
       body,
       updateAt,
     };
-    // respon sukses
+    // Respon sukses
     const res = h.response({
       status: 'success',
       message: 'Catatan berhasil diperbarui',
@@ -95,10 +96,34 @@ const editNoteByIdHandler = (req, h) => {
     res.code(200);
     return res;
   }
-  // respon fail
+  // Respon fail
   const res = h.response({
     status: 'fail',
     message: 'Gagal memperbarui catatan. Id not found',
+  });
+  res.code(404);
+  return res;
+};
+
+const deleteNoteByIdHandler = (req, h) => {
+  // Mendapatkan ID dan mencocokkannya
+  const { id } = req.params;
+  const index = notes.findIndex((note) => note.id === id);
+  // Menghapus array dengan arraay.splice()
+  if (index !== -1) {
+    notes.splice(index, 1);
+    // Respon berhasil
+    const res = h.response({
+      status: 'success',
+      message: 'Catatan berhsil dihapus',
+    });
+    res.code(200);
+    return res;
+  }
+  // Respon gagal
+  const res = h.response({
+    status: 'fail',
+    message: 'Gagagal menghapus catatan, ID not found',
   });
   res.code(404);
   return res;
@@ -109,4 +134,5 @@ module.exports = {
   getAllNotesHandler,
   getHandlerById,
   editNoteByIdHandler,
+  deleteNoteByIdHandler,
 };
